@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\Auth\AuthResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,13 +17,25 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Geçersiz giriş bilgileri.'],
             ]);
         }
 
-        $token= $user->createToken('myToken')->plainTextToken;
+        return $this->makeToken($user);
+    }
+
+    public function register(RegisterRequest $request)
+    {
+        $user = User::create($request->validated());
+
+        return $this->makeToken($user);
+    }
+
+    public function makeToken(User $user)
+    {
+        $token = $user->createToken('myToken')->plainTextToken;
 
         return AuthResource::make([
             'token' => $token,
@@ -31,9 +44,5 @@ class AuthController extends Controller
                 'email' => $user->email,
             ]
         ]);
-    }
-    public function register()
-    {
-
     }
 }

@@ -22,7 +22,27 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:60',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
+            'password_confirmation' => 'same:password',
+            'terms' => 'accepted',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Ad alanı zorunludur.',
+            'name.string' => 'Ad alanı metin olmalıdır.',
+            'name.max' => 'Ad alanı en fazla 60 karakter olmalıdır.',
+            'email.required' => 'Email alanı zorunludur.',
+            'email.email' => 'Geçerli bir email adresi giriniz.',
+            'email.unique' => 'Bu email adresi sistemde mevcuttur.',
+            'password.required' => 'Parola alanı zorunludur.',
+            'password.min' => 'Parola en az 8 karakter olmalıdır.',
+            'password_confirmation.same' => 'Parola tekrarı eşleşmiyor.',
+            'terms.accepted' => 'Lütfen koşulları kabul edin.',
         ];
     }
 }
