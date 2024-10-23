@@ -45,4 +45,11 @@ class AuthController extends Controller
             ]
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json(['message' => 'Çıkış yapıldı.'], 200);
+    }
 }
